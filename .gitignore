@@ -1,0 +1,16 @@
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local history
+history/
+
+# Xailib
+src/lore_sa

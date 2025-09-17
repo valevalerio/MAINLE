@@ -1,0 +1,51 @@
+Evaluator,Explanation,Technical Jargon,Simplicity,Completeness,Conciseness
+1,Raw,Agree,Agree,Disagree,Agree
+1,Simplified,Strongly Agree,Strongly Agree,Strongly Disagree,Disagree
+2,Raw,Disagree,Strongly Agree,Agree,Neutral
+2,Simplified,Disagree,Strongly Agree,Disagree,Strongly Agree
+3,Raw,Strongly Agree,Strongly Agree,Agree,Agree
+3,Simplified,Agree,Strongly Agree,Disagree,Neutral
+4,Raw,Agree,Disagree,Disagree,Disagree
+4,Simplified,Agree,Agree,Agree,Agree
+5,Raw,Neutral,Disagree,Agree,Neutral
+5,Simplified,Agree,Strongly Agree,Agree,Strongly Agree
+6,Raw,Neutral,Neutral,Strongly Agree,Strongly Agree
+6,Simplified,Strongly Agree,Strongly Agree,Neutral,Agree
+7,Raw,Agree,Disagree,Strongly Disagree,Disagree
+7,Simplified,Agree,Agree,Disagree,Agree
+8,Raw,Agree,Neutral,Strongly Agree,Strongly Agree
+8,Simplified,Strongly Agree,Strongly Agree,Neutral,Disagree
+9,Raw,Disagree,Strongly Disagree,Strongly Agree,Neutral
+9,Simplified,Agree,Strongly Agree,Agree,Strongly Agree
+10,Raw,Neutral,Disagree,Agree,Neutral
+10,Simplified,Disagree,Strongly Agree,Agree,Strongly Agree
+11,Raw,Agree,Neutral,Disagree,Agree
+11,Simplified,Agree,Agree,Agree,Agree
+12,Raw,Strongly Disagree,Strongly Disagree,Strongly Agree,Strongly Agree
+12,Simplified,Strongly Agree,Strongly Agree,Strongly Disagree,Strongly Disagree
+13,Raw,Agree,Neutral,Disagree,Neutral
+13,Simplified,Neutral,Agree,Neutral,Agree
+14,Raw,Agree,Agree,Agree,Agree
+14,Simplified,Agree,Agree,Strongly Agree,Agree
+15,Raw,Disagree,Disagree,Disagree,Disagree
+15,Simplified,Agree,Agree,Agree,Agree
+16,Raw,Strongly Agree,Agree,Strongly Agree,Agree
+16,Simplified,Agree,Agree,Neutral,Agree
+17,Raw,Disagree,Strongly Disagree,Neutral,Strongly Disagree
+17,Simplified,Strongly Agree,Strongly Agree,Agree,Strongly Agree
+18,Raw,Agree,Agree,Disagree,Agree
+18,Simplified,Agree,Neutral,Disagree,Agree
+19,Raw,Agree,Agree,Neutral,Strongly Disagree
+19,Simplified,Agree,Strongly Agree,Strongly Agree,Strongly Agree
+20,Raw,Strongly Disagree,Disagree,Neutral,Disagree
+20,Simplified,Agree,Disagree,Strongly Agree,Strongly Agree
+21,Raw,Strongly Agree,Agree,Strongly Agree,Neutral
+21,Simplified,Agree,Agree,Agree,Strongly Agree
+22,Raw,Disagree,Agree,Agree,Disagree
+22,Simplified,Agree,Strongly Agree,Strongly Disagree,Agree
+23,Raw,Disagree,Disagree,Agree,Agree
+23,Simplified,Strongly Agree,Strongly Agree,Agree,Strongly Agree
+24,Raw,Disagree,Strongly Disagree,Neutral,Disagree
+24,Simplified,Strongly Agree,Strongly Agree,Neutral,Agree
+25,Raw,Strongly Disagree,Disagree,Strongly Disagree,Strongly Disagree
+25,Simplified,Strongly Disagree,Agree,Strongly Disagree,Strongly Disagree

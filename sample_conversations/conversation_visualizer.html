@@ -1,0 +1,103 @@
+<!-- Example code to load JSON of history and print the chat on the screen -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualize conversation</title>
+</head>
+<body>
+    <h1>Visualize conversation</h1>
+
+    <!-- File Input -->
+    <input type="file" id="fileInput" accept=".json" />
+
+    <script>
+        function showSystemPrompt() {
+            var checkBox = document.getElementById("systemPromptCheck");
+            var systemPrompts = document.getElementsByClassName("system-prompt");
+
+            // if the checkbox is checked, display all system prompts
+            if (checkBox.checked == true) {
+                for (let i = 0; i < systemPrompts.length; i++) {
+                    systemPrompts[i].style.display = "flex";
+                }
+            } else {
+                for (let i = 0; i < systemPrompts.length; i++) {
+                    systemPrompts[i].style.display = "none";
+                }
+            }
+        }
+
+        // create an empty list to hold the messages
+        let messages = [];
+
+        let user_icon = "<div style='background-color: #f3f4f6; border-radius: 9999px; padding: .5rem; align: center'><svg width='24px' height='24px' viewBox='0 0 24 24' fill='none' version='1.1' id='svg2' xmlns='http://www.w3.org/2000/svg'><path d='M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' id='path1' style='stroke:#3b82f6;stroke-opacity:1;stroke-width:1.5;stroke-dasharray:none' /><path d='M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' id='path2' style='stroke:#3b82f6;stroke-opacity:1;stroke-width:1.5;stroke-dasharray:none' /></svg></div>";
+
+        let robot_icon = "<div style='background-color: #f3f4f6; border-radius: 9999px; padding: .5rem; align: center'><svg width='24' height='24' viewBox='0 0 25 25' fill='none' version='1.1' id='svg1' xmlns='http://www.w3.org/2000/svg'><path d='M12.5 15.5V17.5M12.5 8.5V6.5M12.5 6.5C13.3284 6.5 14 5.82843 14 5C14 4.17157 13.3284 3.5 12.5 3.5C11.6716 3.5 11 4.17157 11 5C11 5.82843 11.6716 6.5 12.5 6.5ZM20.5 20.5V19.5C20.5 18.3954 19.6046 17.5 18.5 17.5H6.5C5.39543 17.5 4.5 18.3954 4.5 19.5V20.5H20.5ZM11.5 12C11.5 12.5523 11.0523 13 10.5 13C9.94772 13 9.5 12.5523 9.5 12C9.5 11.4477 9.94772 11 10.5 11C11.0523 11 11.5 11.4477 11.5 12ZM15.5 12C15.5 12.5523 15.0523 13 14.5 13C13.9477 13 13.5 12.5523 13.5 12C13.5 11.4477 13.9477 11 14.5 11C15.0523 11 15.5 11.4477 15.5 12ZM8.5 15.5H16.5C17.6046 15.5 18.5 14.6046 18.5 13.5V10.5C18.5 9.39543 17.6046 8.5 16.5 8.5H8.5C7.39543 8.5 6.5 9.39543 6.5 10.5V13.5C6.5 14.6046 7.39543 15.5 8.5 15.5Z' stroke='#121923' stroke-width='1.2' id='path1' style='stroke:#22c55e;stroke-opacity:1;stroke-width:1.2;stroke-dasharray:none'/></svg></div>";
+
+        let flex_container_style = "style='display: flex; flex-direction: row; align-items: flex-start; padding: 10px;'"
+        let hidden_container_style = "style='display: none; flex-direction: row; align-items: flex-start; padding: 10px;'"
+        let message_style = "style='flex: 1 1 0%; padding: 10px; margin-left: 10px; border: 1px solid lightgrey; border-radius: 5px;'"
+        let system_style = "style='flex: 1 1 0%; padding: 10px; margin-left: 10px; border: 1px solid black; border-radius: 5px; background-color: lightgrey;'"
+
+        // load and parse the json file content from the file input
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    document.write("<label for='systemPromptCheck'>show system prompt: </label>");
+                    document.write("<input type='checkbox' id='systemPromptCheck' onclick='showSystemPrompt()'>");
+
+                    // put each json object in the file content into the messages list
+                    messages = JSON.parse(e.target.result);
+
+                    document.write();
+
+                    // for each message, print only the model
+                    for (let i = 0; i < messages.length; i++) {
+                        if (messages[i].role === "system") {
+                            document.write("<div class='system-prompt' " + hidden_container_style + ">");
+                        } else {
+                            document.write("<div class='regular-message' " + flex_container_style + ">");
+                        }
+
+                        if (messages[i].role === "user") {
+                            document.write(user_icon);
+                        } else {
+                            document.write(robot_icon);
+                        }
+
+                        if (messages[i].role === "system") {
+                            document.write("<div class='' " + system_style + ">");
+                        } else {
+                            document.write("<div class='' " + message_style + ">");
+                        }
+
+                        document.write("<pre style='margin: 3px 3px 0px 3px; font-size: 1.1em'><b>" + messages[i].role + "</b></pre>");
+
+                        // if the message is from the assistant, print the model
+                        if (messages[i].role === "assistant" || messages[i].role === "system") {
+                            document.write("<pre style='margin: 0px 3px 12px 3px; font-size: 0.8em; color: grey'>" + messages[i].model + "</pre>");
+                        }
+
+                        // if message is empty, add an empty line
+                        if (messages[i].content === "") {
+                            messages[i].content = "<br>";
+                        }
+
+                        document.write("<pre style='margin: 5px 3px 3px 3px; white-space: pre-wrap'>" + messages[i].content + "</pre>");
+                        document.write("</div>");
+                        document.write("</div>");
+                        // document.write("<pre>" + messages[i].date + "</pre>");
+                    }
+                };
+
+                reader.readAsText(file);
+            } else {
+                alert("No file selected.");
+            }
+        });
+    </script>
+</body>
+</html>
