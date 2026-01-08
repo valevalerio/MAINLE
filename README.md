@@ -111,16 +111,22 @@ If MAINLE was useful for you, please consider citing the paper.
 ## BibTex
 
 ```
-@article{serafim2025mainle,
-  title = {{MAINLE}: a Multi-Agent, Interactive, Natural Language Local Explainer of Classification Tasks},
-  author  = {Serafim, Paulo Bruno Sousa and
-    F\'{e}rrer Filho, R\^{o}mulo Freire and
-    Freitas, Stenio Wagner and
+@inproceedings{serafim2025mainle,
+  author = {Serafim, Paulo Bruno and
+    F\'{e}rrer Filho, R\^{o}mulo and
+    Freitas, Stenio and
     Gezici, Gizem and
     Giannotti, Fosca and
     Raimondi, Franco and
-    Santos, Alexandre Magno Monteiro},
-  journal = {ECML PKDD},
-  year = {2025}
+    Santos, Alexandre},
+  title = {{MAINLE}: A Multi-Agent, Interactive, Natural Language Local Explainer of Classification Tasks},
+  booktitle = {Machine Learning and Knowledge Discovery in Databases. Research Track: European Conference, ECML PKDD 2025, Porto, Portugal, September 15--19, 2025, Proceedings, Part IV},
+  publisher = {Springer-Verlag},
+  address = {Berlin, Heidelberg},
+  pages = {149--165},
+  numpages = {17},
+  year = {2025},
+  isbn = {978-3-032-06077-8},
+  doi = {10.1007/978-3-032-06078-5_9}
 }
 ```
