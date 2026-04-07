@@ -62,14 +62,19 @@ You can find full requirements in the `requirements.txt` file.
 - openai: 1.107.3
 - google-genai: 1.38.0
 
-### LORE
-MAINLE expects that LORE (Local Rule-Based Explanations) is accessible for the Explainer agent to work.
-Please put the `lore_sa` inside the `src` folder, but outside of the `mainle` folder.
+### LORE dependency
+MAINLE relies on **LORE (Local Rule-Based Explanations)** for the Explainer agent.
+The repository includes LORE as a Git submodule, already configured and pinned to a compatible version.
+#### Setup
 
-- Latest tested version: commit `fdbaddb`
-    - available at: https://github.com/kdd-lab/LORE_sa/tree/fbdaddb8b261a76f26a1b3a9c62ccda46afdf5de
-    - You have to copy the `lore_sa` folder and paste it inside the `src` folder
+After cloning the repository, initialize the submodule:
 
+`git submodule update --init --recursive`
+
+#### Notes
+The submodule is pinned to a tested commit for compatibility.
+
+Do not move the `lore_sa` folder, as MAINLE expects it at this location.
 ### API Keys
 
 Depending on the LLM you use, it might be necessary to provide an API key for the respective model.
