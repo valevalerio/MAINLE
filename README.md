@@ -1,5 +1,9 @@
+# MAINLE 
+Pronunciation: _/ˈmeɪnli/_
 
-# MAINLE
+MAINLE is a *multi-agent* architecture for a *conversational interface* to provide *simplified* explanations for *non-expert* users.
+
+---
 
 This repository contains the source code of MAINLE. This code has been used to run the experiments presented in the paper
 ```
@@ -7,7 +11,6 @@ MAINLE: a Multi-Agent, Interactive, Natural Language Local Explainer of Classifi
 ```
 written by [Paulo Bruno Serafim](https://paulobruno.github.io), [Rômulo Férrer Filho](https://github.com/romulofff), [Stenio Wagner Freitas](https://github.com/steniowagner), [Gizem Gezici](https://scholar.google.com/citations?user=JQK0dyUAAAAJ), [Fosca Giannotti](https://kdd.isti.cnr.it/people/giannotti-fosca), [Franco Raimondi](https://www2.rmnd.net/), and [Alexandre Santos](https://github.com/magnomont12), and presented at the [ECML PKDD 2025](https://ecmlpkdd.org/2025/) conference.
 
-In short, MAINLE is a *multi-agent* architecture for a *conversational interface* to provide *simplified* explanations for *non-expert* users.
 
 ## Pre-print
 
