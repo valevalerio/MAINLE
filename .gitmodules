@@ -1,0 +1,3 @@
+[submodule "src/lore_sa"]
+	path = src/lore_sa
+	url = https://github.com/kdd-lab/LORE_sa.git
