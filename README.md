@@ -72,9 +72,8 @@ After cloning the repository, initialize the submodule:
 `git submodule update --init --recursive`
 
 #### Notes
-The submodule is pinned to a tested commit for compatibility.
+The submodule is pinned to a tested commit for compatibDo not move the `lore_sa` folder, as MAINLE expects it at this location.
 
-Do not move the `lore_sa` folder, as MAINLE expects it at this location.
 ### API Keys
 
 Depending on the LLM you use, it might be necessary to provide an API key for the respective model.
