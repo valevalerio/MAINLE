@@ -69,10 +69,18 @@ The repository includes LORE as a Git submodule, already configured and pinned t
 
 After cloning the repository, initialize the submodule:
 
-`git submodule update --init --recursive`
+```
+git submodule update --init --recursive
+```
+
+Then install it as a local package:
+
+```
+pip install -e src/lore_sa/
+```
 
 #### Notes
-The submodule is pinned to a tested commit for compatibDo not move the `lore_sa` folder, as MAINLE expects it at this location.
+The submodule is pinned to a tested commit for compatibility. Do not move the `lore_sa` folder, as MAINLE expects it at `src/lore_sa/`. Next work will include updating the submodule to the latest version of the pip package, ensuring compatibility and removing it from the repository itself. 
 
 ### API Keys
 
