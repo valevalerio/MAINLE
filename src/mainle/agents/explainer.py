@@ -37,6 +37,7 @@ class LoreExplainer(Explainer):
             return None
 
         predicted_class = self.model.predict(feature_values.values.reshape(1, -1))[0]
+        instance["class"] = predicted_class
         assert predicted_class == instance["class"], f"System Error: Predicted class {predicted_class} does not match the provided class {instance['class']}."
 
         predicted_proba = max(self.model.predict_proba(feature_values.values.reshape(1, -1))[0])
