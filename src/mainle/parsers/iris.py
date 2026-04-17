@@ -16,7 +16,13 @@ class IrisParser(LlmParser):
         Returns a dictionary if the response contains all necessary information
         in the expected format. Otherwise, returns None.
         """
-        user_features = str(response).split("```")[0]
+        response_str = str(response)
+        # strip markdown code blocks so the dict is always reachable
+        parts = response_str.split("```")
+        user_features = parts[1] if len(parts) >= 3 else parts[0]
+        # strip optional language tag (e.g. "json\n{...")
+        if user_features and not user_features.startswith("{"):
+            user_features = user_features[user_features.find("{"):]
 
         #  if the response contains all information correctly parsed
         if "{" in user_features and "}" in user_features:
@@ -84,3 +90,4 @@ def iris_system_instructions() -> str:
     system_prompt = textwrap.dedent(system_prompt)
 
     return system_prompt
+
