@@ -64,23 +64,7 @@ You can find full requirements in the `requirements.txt` file.
 
 ### LORE dependency
 MAINLE relies on **LORE (Local Rule-Based Explanations)** for the Explainer agent.
-The repository includes LORE as a Git submodule, already configured and pinned to a compatible version.
-#### Setup
-
-After cloning the repository, initialize the submodule:
-
-```
-git submodule update --init --recursive
-```
-
-Then install it as a local package:
-
-```
-pip install -e src/lore_sa/
-```
-
-#### Notes
-The submodule is pinned to a tested commit for compatibility. Do not move the `lore_sa` folder, as MAINLE expects it at `src/lore_sa/`. Next work will include updating the submodule to the latest version of the pip package, ensuring compatibility and removing it from the repository itself. 
+It is available as a standard pip package `pip install lore-sa` and will be installed automatically via `requirements.txt`.
 
 ### API Keys
 
