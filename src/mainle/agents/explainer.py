@@ -25,7 +25,9 @@ class LoreExplainer(Explainer):
         self.model = model
 
     def execute(self, instance: dict):
-        feature_values = pd.Series(instance)[:-1]
+        feature_names = self.dataset.get_features_names()
+        feature_names = [feature for feature in feature_names if feature != 'class']
+        feature_values = pd.Series({feature: instance[feature] for feature in feature_names})
 
         # create a LORE explainer using a random neighborhood generator
         explainer = TabularRandomGeneratorLore(self.model, self.dataset)
@@ -37,8 +39,6 @@ class LoreExplainer(Explainer):
             return None
 
         predicted_class = self.model.predict(feature_values.values.reshape(1, -1))[0]
-        instance["class"] = predicted_class
-        assert predicted_class == instance["class"], f"System Error: Predicted class {predicted_class} does not match the provided class {instance['class']}."
 
         predicted_proba = max(self.model.predict_proba(feature_values.values.reshape(1, -1))[0])
 
@@ -49,8 +49,7 @@ class LoreExplainer(Explainer):
         max_num_counterfactuals = min(5, len(counter_rules))
         counter_rules = counter_rules[0:max_num_counterfactuals]
 
-        feature_names = self.dataset.get_features_names()[:-1]
-        class_values = list(set(self.dataset.get_class_values()))
+        class_values = sorted(list(set(self.dataset.get_class_values())))
 
         prompt = self._generate_prompt(
             feature_names,
@@ -62,7 +61,7 @@ class LoreExplainer(Explainer):
             feature_values,
             rule,
             counter_rules,
-            instance["class"],
+            predicted_class,
             predicted_proba,
             add_demonstration=False,
             add_instructions=False,
@@ -108,12 +107,13 @@ class LoreExplainer(Explainer):
         return demonstration
 
     def _instance_description(self, feature_names, instance_values):
+        values = list(instance_values.values) if hasattr(instance_values, "values") else list(instance_values)
         instance_text = ""
 
-        for feature, instance in zip(feature_names[:-1], instance_values[:-1]):
+        for feature, instance in zip(feature_names[:-1], values[:-1]):
             instance_text += f"{feature} = {instance}, "
 
-        instance_text += f"and {feature_names[-1]} = {instance_values[-1]}"
+        instance_text += f"and {feature_names[-1]} = {values[-1]}"
 
         description = f"An instance has features: {instance_text}."
 

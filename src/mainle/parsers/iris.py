@@ -13,34 +13,36 @@ class IrisParser(LlmParser):
 
     def _response_to_dict(self, response: str) -> dict:
         """
-        Returns a dictionary if the response contains all necessary information
-        in the expected format. Otherwise, returns None.
+        Returns a dictionary if the response contains all necessary feature values.
+        The class is not requested from the user and will be predicted internally.
         """
-        response_str = str(response)
-        # strip markdown code blocks so the dict is always reachable
-        parts = response_str.split("```")
-        user_features = parts[1] if len(parts) >= 3 else parts[0]
-        # strip optional language tag (e.g. "json\n{...")
-        if user_features and not user_features.startswith("{"):
-            user_features = user_features[user_features.find("{"):]
+        parsed_features = self._response_to_exact_schema_dict(
+            response,
+            [
+                "sepal length (cm)",
+                "sepal width (cm)",
+                "petal length (cm)",
+                "petal width (cm)",
+            ],
+            aliases={
+                "sepal length (cm)": ["sepal length"],
+                "sepal width (cm)": ["sepal width"],
+                "petal length (cm)": ["petal length"],
+                "petal width (cm)": ["petal width"],
+            },
+        )
 
-        #  if the response contains all information correctly parsed
-        if "{" in user_features and "}" in user_features:
-            user_features = user_features.split("{")[1].split("}")[0]
-            user_features = "{" + user_features + "}"
-
+        if parsed_features:
             print(f"\n>> [{self.chat_engine}]: Thank you for the information. I will now start processing your explanation request. Please wait a moment, it may take up to 2 minutes.")
 
-            return ast.literal_eval(user_features)
-
-        return None
+        return parsed_features
 
 
 def iris_system_instructions() -> str:
     system_prompt = """\
         ### Task Overview
-        You will be given a set of feature values and a classification for a task. Your job is to:
-        - Validate the input to ensure all necessary information is present.
+        You will be given a set of feature values for a flower. Your job is to:
+        - Validate the input to ensure all necessary feature values are present.
         - Request missing data from the user in a friendly manner.
         - Format the information according to the dictionary structure below.
 
@@ -48,13 +50,9 @@ def iris_system_instructions() -> str:
         Feature Values:
         {feature_values}
 
-        Classification:
-        Must be one of: {target_values}
-
         ### Interaction Guidelines
         - Only ask for missing values. If you can infer data, do so.
         - Do not assume values—all data must come from the user.
-        - Ensure classification is valid. If it does not match an expected value, request clarification.
         - Respond in JSON format once all details are collected.
 
         ### Example Input
@@ -65,28 +63,24 @@ def iris_system_instructions() -> str:
             "sepal length": 5.1,
             "sepal width": 3.5,
             "petal length": 1.4,
-            "petal width": 0.2,
-            "class": "setosa"
+            "petal width": 0.2
         }
 
         ### Missing Data Example:
-        The flower has a sepal length of 6.2, petal length of 5.1, and petal width of 2.0.
+        The flower has a sepal length (cm) of 6.2 and petal length (cm) of 5.1.
 
         Response:
-        Thanks for your input! Could you also provide the missing sepal width and classification (setosa, versicolor, or virginica)?\
+        Thanks for your input! Could you also provide the missing sepal width (cm) and petal width (cm)?\
     """
 
     feature_values = """\
-        Sepal length (number)
-        Sepal width (number)
-        Petal length (number)
-        Petal width (number)\
+        sepal length (cm): number
+        sepal width (cm): number
+        petal length (cm): number
+        petal width (cm): number\
     """
 
-    target_values = "['setosa', 'versicolor', 'virginica']"
-
     system_prompt = system_prompt.replace("{feature_values}", feature_values)
-    system_prompt = system_prompt.replace("{target_values}", target_values)
     system_prompt = textwrap.dedent(system_prompt)
 
     return system_prompt
