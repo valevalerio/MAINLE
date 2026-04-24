@@ -13,7 +13,7 @@ class WineParser(LlmParser):
 
     def _response_to_dict(self, response: str) -> dict:
         """
-        Returns a dictionary if the response contains all necessary information
+        Returns a dictionary if the response contains all necessary feature values
         in the expected format. Otherwise, returns None.
         """
         user_features = str(response).split("```")[0]
@@ -34,8 +34,8 @@ class WineParser(LlmParser):
 def wine_system_instructions() -> str:
     system_prompt = """\
         ### Task Overview
-        You will be given a set of feature values and a classification for a task. Your job is to:
-        - Validate the input to ensure all necessary information is present.
+        You will be given a set of feature values for a wine sample. Your job is to:
+        - Validate the input to ensure all necessary feature values are present.
         - Request missing data from the user in a friendly manner.
         - Format the information according to the dictionary structure below.
 
@@ -43,32 +43,36 @@ def wine_system_instructions() -> str:
         Feature Values:
         {feature_values}
 
-        Classification:
-        Must be one of: {target_values}
-
         ### Interaction Guidelines
         - Only ask for missing values. If you can infer data, do so.
         - Do not assume values—all data must come from the user.
-        - Ensure classification is valid. If it does not match an expected value, request clarification.
         - Respond in JSON format once all details are collected.
 
-        ### Example Input from another dataset
-        Hello. A flower has a sepal length of 5.1, sepal width of 3.5, petal length of 1.4, and petal width of 0.2. Please explain why it is a setosa.
+        ### Example Input
+        The wine has alcohol 13.2, malic acid 1.8, ash 2.4, alcalinity of ash 18.5, magnesium 105, total phenols 2.6, flavanoids 2.8, nonflavanoid phenols 0.3, proanthocyanins 1.9, color intensity 5.2, hue 1.05, OD280/OD315 of diluted wines 3.1, and proline 980.
 
         ### Example Output
         {
-            "sepal length": 5.1,
-            "sepal width": 3.5,
-            "petal length": 1.4,
-            "petal width": 0.2,
-            "class": "setosa"
+            "Alcohol": 13.2,
+            "Malic acid": 1.8,
+            "Ash": 2.4,
+            "Alcalinity of ash": 18.5,
+            "Magnesium": 105,
+            "Total phenols": 2.6,
+            "Flavanoids": 2.8,
+            "Nonflavanoid phenols": 0.3,
+            "Proanthocyanins": 1.9,
+            "Color intensity": 5.2,
+            "Hue": 1.05,
+            "OD280/OD315 of diluted wines": 3.1,
+            "Proline": 980
         }
 
         ### Missing Data Example:
-        The flower has a sepal length of 6.2, petal length of 5.1, and petal width of 2.0.
+        The wine has alcohol 12.8, ash 2.2, and hue 0.95.
 
         Response:
-        Thanks for your input! Could you also provide the missing sepal width and classification (setosa, versicolor, or virginica)?\
+        Thanks for your input! Could you also provide the remaining missing feature values?\
     """
 
     feature_values = """\
@@ -87,10 +91,7 @@ def wine_system_instructions() -> str:
         - Proline: number
     """
 
-    target_values = "['class_0', 'class_1', 'class_2']"
-
     system_prompt = system_prompt.replace("{feature_values}", feature_values)
-    system_prompt = system_prompt.replace("{target_values}", target_values)
     system_prompt = textwrap.dedent(system_prompt)
 
     return system_prompt

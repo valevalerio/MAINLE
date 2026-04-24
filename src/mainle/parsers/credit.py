@@ -13,7 +13,7 @@ class CreditParser(LlmParser):
 
     def _response_to_dict(self, response: str) -> dict:
         """
-        Returns a dictionary if the response contains all necessary information
+        Returns a dictionary if the response contains all necessary feature values
         in the expected format. Otherwise, returns None.
         """
         user_features = str(response).split("```")[0]
@@ -33,8 +33,8 @@ class CreditParser(LlmParser):
 def credit_system_instructions() -> str:
     system_prompt = """\
         ### Task Overview
-        You will be given a set of feature values and a classification for a task. Your job is to:
-        - Validate the input to ensure all necessary information is present.
+        You will be given a set of feature values for a credit application. Your job is to:
+        - Validate the input to ensure all necessary feature values are present.
         - Request missing data from the user in a friendly manner.
         - Format the information according to the dictionary structure below.
 
@@ -42,32 +42,38 @@ def credit_system_instructions() -> str:
         Feature Values:
         {feature_values}
 
-        Classification:
-        Must be one of: {target_values}
-
         ### Interaction Guidelines
         - Only ask for missing values. If you can infer data, do so.
         - Do not assume values—all data must come from the user.
-        - Ensure classification is valid. If it does not match an expected value, request clarification.
         - Respond in JSON format once all details are collected.
 
-        ### Example Input from another dataset
-        Hello. A flower has a sepal length of 5.1, sepal width of 3.5, petal length of 1.4, and petal width of 0.2. Please explain why it is a setosa.
+        ### Example Input
+        The applicant has gender b, age 31, debt 1.25, marital status u, bank customer g, educational level q, ethnicity v, 2 years employed, prior default f, employment status t, credit score 20, driver license t, citizenship g, zipcode 120, and income 5000.
 
         ### Example Output
         {
-            "sepal length": 5.1,
-            "sepal width": 3.5,
-            "petal length": 1.4,
-            "petal width": 0.2,
-            "class": "setosa"
+            "Gender": "b",
+            "Age": 31,
+            "Debt": 1.25,
+            "Marital status": "u",
+            "Bank customer": "g",
+            "Educational level": "q",
+            "Ethnicity": "v",
+            "Number of years employed": 2,
+            "Prior default": "f",
+            "Employment status": "t",
+            "Credit score": 20,
+            "Driver license": "t",
+            "Citizenship": "g",
+            "Zipcode": 120,
+            "Income": 5000
         }
 
         ### Missing Data Example:
-        The flower has a sepal length of 6.2, petal length of 5.1, and petal width of 2.0.
+        The applicant has age 40, debt 0.5, and income 2000.
 
         Response:
-        Thanks for your input! Could you also provide the missing sepal width and classification (setosa, versicolor, or virginica)?\
+        Thanks for your input! Could you also provide the remaining missing feature values?\
     """
 
     feature_values = """\
@@ -88,10 +94,7 @@ def credit_system_instructions() -> str:
         - Income: number
     """
 
-    target_values = "['approved', 'rejected']"
-
     system_prompt = system_prompt.replace("{feature_values}", feature_values)
-    system_prompt = system_prompt.replace("{target_values}", target_values)
     system_prompt = textwrap.dedent(system_prompt)
 
     return system_prompt

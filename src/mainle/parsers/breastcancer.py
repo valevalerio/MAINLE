@@ -13,7 +13,7 @@ class BreastcancerParser(LlmParser):
 
     def _response_to_dict(self, response: str) -> dict:
         """
-        Returns a dictionary if the response contains all necessary information
+        Returns a dictionary if the response contains all necessary feature values
         in the expected format. Otherwise, returns None.
         """
         user_features = str(response).split("```")[0]
@@ -33,8 +33,8 @@ class BreastcancerParser(LlmParser):
 def breastcancer_system_instructions() -> str:
     system_prompt = """\
         ### Task Overview
-        You will be given a set of feature values and a classification for a task. Your job is to:
-        - Validate the input to ensure all necessary information is present.
+        You will be given a set of feature values for a breast cancer case. Your job is to:
+        - Validate the input to ensure all necessary feature values are present.
         - Request missing data from the user in a friendly manner.
         - Format the information according to the dictionary structure below.
 
@@ -42,32 +42,32 @@ def breastcancer_system_instructions() -> str:
         Feature Values:
         {feature_values}
 
-        Classification:
-        Must be one of: {target_values}
-
         ### Interaction Guidelines
         - Only ask for missing values. If you can infer data, do so.
         - Do not assume values—all data must come from the user.
-        - Ensure classification is valid. If it does not match an expected value, request clarification.
         - Respond in JSON format once all details are collected.
 
-        ### Example Input from another dataset
-        Hello. A flower has a sepal length of 5.1, sepal width of 3.5, petal length of 1.4, and petal width of 0.2. Please explain why it is a setosa.
+        ### Example Input
+        The case has clump thickness 5, uniformity of cell size 1, uniformity of cell shape 1, marginal adhesion 1, single epithelial cell size 2, bare nuclei 1, bland chromatin 3, normal nucleoli 1, and mitoses 1.
 
         ### Example Output
         {
-            "sepal length": 5.1,
-            "sepal width": 3.5,
-            "petal length": 1.4,
-            "petal width": 0.2,
-            "class": "setosa"
+            "Clump_thickness": 5,
+            "Uniformity_of_cell_size": 1,
+            "Uniformity_of_cell_shape": 1,
+            "Marginal_adhesion": 1,
+            "Single_epithelial_cell_size": 2,
+            "Bare_nuclei": 1,
+            "Bland_chromatin": 3,
+            "Normal_nucleoli": 1,
+            "Mitoses": 1
         }
 
         ### Missing Data Example:
-        The flower has a sepal length of 6.2, petal length of 5.1, and petal width of 2.0.
+        The case has clump thickness 7, uniformity of cell size 8, and mitoses 2.
 
         Response:
-        Thanks for your input! Could you also provide the missing sepal width and classification (setosa, versicolor, or virginica)?\
+        Thanks for your input! Could you also provide the missing feature values?\
     """
 
     feature_values = """\
@@ -82,10 +82,7 @@ def breastcancer_system_instructions() -> str:
         - Mitoses: number
     """
 
-    target_values = "['benign', 'malignant']"
-
     system_prompt = system_prompt.replace("{feature_values}", feature_values)
-    system_prompt = system_prompt.replace("{target_values}", target_values)
     system_prompt = textwrap.dedent(system_prompt)
 
     return system_prompt
