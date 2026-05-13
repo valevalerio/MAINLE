@@ -81,6 +81,30 @@ To end a conversation, please reply with `Thank you`, `Thanks`, or `Goodbye`.
 By default, MAINLE will save a conversation JSON inside a `history` folder.
 We provide an HTML visualizer in the `sample_conversations` folder and also a web-based visualizer, accessible at [https://pb-rho.vercel.app/](https://pb-rho.vercel.app/).
 
+## Replication and data layout
+
+For the ictus replica, keep the data/model workspace as a sibling folder of `MAINLE/` (for example `../ictusXAI/`).
+
+Recommended sibling structure:
+
+- `MAINLE/`: the explanation pipeline
+- `ictusXAI/`: the stroke/ictus data, preprocessing, trained black-box models, and evaluation assets
+
+The conversation protocol should stay fixed across samples:
+
+- use the same question template for every sample in a dataset
+- change only the instance values and dataset-specific placeholders
+- save the full conversation history for each run
+- freeze the raw/simplified explanation pair before running the AI Critic or human raters
+
+When reporting the experiment on paper, include:
+
+- how the conversation was collected
+- how histories and outputs were saved
+- whether question order was randomized
+- whether human raters were blinded
+- which rubric and scale were used for AI and human evaluation
+
 ## Sample questions
 
 If you try running MAINLE, you will be expected to present an input instance and a classification decision.

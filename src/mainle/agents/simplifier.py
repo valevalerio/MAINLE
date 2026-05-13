@@ -16,21 +16,33 @@ class Simplifier(agents.Agent):
 
 
 class LlmSimplifier(Simplifier):
-    def __init__(self, chat_engine: chat.ChatEngine):
+    def __init__(self, chat_engine: chat.ChatEngine, raw_explanation: str | None = None):
         self.chat_engine = chat_engine
+        self.raw_explanation = raw_explanation or ""
 
-    def execute(self, raw_explanation: str, additional_context: str = "") -> str:
-        prompt = f"""\
+    def execute(self, raw_explanation: str = "", additional_context: str = "") -> str:
+        # Use provided raw_explanation (from parameter) or fall back to instance variable (from init)
+        explanation_to_simplify = raw_explanation or self.raw_explanation
+
+        # If raw_explanation is provided via execute() parameter (backward compatibility with examples),
+        # embed it in the user prompt. Otherwise, assume it's in the system prompt.
+        if raw_explanation:
+            # Old behavior: embed in user prompt for backward compatibility with examples
+            prompt = f"""\
             raw explanation:
-            {raw_explanation}\
+            {explanation_to_simplify}\
         """
-        if additional_context:
-            prompt += f"""\
+            if additional_context:
+                prompt += f"""\
             ---
             additional context:
             {additional_context}\
         """
-        simplified_explanation = self.chat_engine.chat(textwrap.dedent(prompt))
+            simplified_explanation = self.chat_engine.chat(textwrap.dedent(prompt))
+        else:
+            # New behavior: raw explanation is in system context, user just requests simplification
+            prompt = "Please provide a simplified explanation of the above analysis."
+            simplified_explanation = self.chat_engine.chat(prompt)
 
         print(f">> [{self.chat_engine}]: {simplified_explanation}")
 
@@ -50,6 +62,42 @@ class LlmSimplifier(Simplifier):
 
     def history(self):
         return self.chat.history()
+
+    def save_history(self, json_filename: str, include_system_prompt: bool = False):
+        self.chat_engine.save_history(json_filename, include_system_prompt=include_system_prompt)
+
+
+class BatchSimplifier(Simplifier):
+    """Non-interactive simplifier for batch/demo mode.
+
+    Instead of reading from stdin, it processes a fixed list of follow-up
+    questions automatically. The follow-up responses are stored in
+    ``self.follow_up_responses`` after ``execute()`` returns.
+    """
+
+    def __init__(self, chat_engine: chat.ChatEngine, follow_up_questions: list[str] | None = None, raw_explanation: str | None = None):
+        self.chat_engine = chat_engine
+        self.follow_up_questions: list[str] = follow_up_questions or []
+        self.follow_up_responses: dict[str, str] = {}
+        self.raw_explanation = raw_explanation or ""
+
+    def execute(self, raw_explanation: str = "", additional_context: str = "") -> str:
+        # Use provided raw_explanation or fall back to instance variable (if set during init)
+        explanation_to_simplify = raw_explanation or self.raw_explanation
+
+        # User prompt: just ask for simplification (raw explanation is in system context)
+        prompt = "Please provide a simplified explanation of the above analysis."
+
+        simplified_explanation = str(self.chat_engine.chat(prompt))
+
+        self.follow_up_responses = {}
+        for question in self.follow_up_questions:
+            self.follow_up_responses[question] = str(self.chat_engine.chat(question))
+
+        return simplified_explanation
+
+    def history(self):
+        return self.chat_engine.history()
 
     def save_history(self, json_filename: str, include_system_prompt: bool = False):
         self.chat_engine.save_history(json_filename, include_system_prompt=include_system_prompt)

@@ -32,11 +32,7 @@ class LoreExplainer(Explainer):
         # create a LORE explainer using a random neighborhood generator
         explainer = TabularRandomGeneratorLore(self.model, self.dataset)
 
-        try:
-            explanation = explainer.explain(feature_values)
-        except Exception as e:
-            print("Error in explanation:", str(e))
-            return None
+        explanation = explainer.explain(feature_values)
 
         predicted_class = self.model.predict(feature_values.values.reshape(1, -1))[0]
 
@@ -51,7 +47,7 @@ class LoreExplainer(Explainer):
 
         class_values = sorted(list(set(self.dataset.get_class_values())))
 
-        prompt = self._generate_prompt(
+        context, question = self._generate_prompt(
             feature_names,
             class_values,
             tree.export_text(
@@ -67,7 +63,7 @@ class LoreExplainer(Explainer):
             add_instructions=False,
         )
 
-        return prompt
+        return context, question
 
     def _generate_prompt(
         self,
@@ -82,12 +78,13 @@ class LoreExplainer(Explainer):
         add_demonstration=False,
         add_instructions=False,
     ):
-        prompt = f"""{self._dataset_description(feature_names, class_values)} A decision tree was trained on the dataset and the following tree was obtained:
+        context = f"""{self._dataset_description(feature_names, class_values)} A decision tree was trained on the dataset and the tree is:
     {tree_representation}{self._default_demonstration() if add_demonstration else ""}
-    {self._instance_description(feature_names, instance_values)}{self._rule_and_counterrules(rule, counter_rules)}{self._instructions() if add_instructions else ""}
-    {self._question(predicted_class, confidence=predicted_proba, has_example=add_demonstration)}"""
+    {self._instance_description(feature_names, instance_values)}{self._rule_and_counterrules(rule, counter_rules)}{self._instructions() if add_instructions else ""}"""
 
-        return prompt
+        question = self._question(predicted_class, confidence=predicted_proba, has_example=add_demonstration)
+
+        return context, question
 
     def _dataset_description(self, feature_names, target_names):
         # convert all list elements to string
@@ -97,7 +94,7 @@ class LoreExplainer(Explainer):
         features_text = ", ".join(feature_names[:-1]) + f", and {feature_names[-1]}"
         targets_text = ", ".join(target_names[:-1]) + f", and {target_names[-1]}"
 
-        description = f"Consider a dataset that has the following features: {features_text}. Each instance can be classified into one of the following classes: {targets_text}."
+        description = f"Consider a dataset that has the following features: {features_text}, where E1 means \'at moment of admission\'. Each instance can be classified into one of the following classes: {targets_text}."
 
         return description
 
@@ -126,12 +123,21 @@ class LoreExplainer(Explainer):
         max_num_counterfactuals = min(5, len(counter_rules))
 
         for i in range(max_num_counterfactuals):
+            simpler_rule = counter_rules[i]
+            simpler_rule["premises"] = [
+                {
+                    "attr": premise["attr"],
+                    "val": round(premise["val"], 4) if isinstance(premise["val"], (int, float)) else premise["val"],
+                    "op": premise["op"],
+                }
+                for premise in simpler_rule["premises"]
+            ]
             text += f"{counter_rules[i]}\n"
 
         return text
 
     def _instructions(self):
-        instructions_text = "\nTo answer the following question, do not refer to the underlying mechanics of the decision tree in any way, and only refer to the features using natural language. All the relevant features must be mentioned in the answer, but features that were not used by the tree should be ignored. Moreover, do not use any technical jargon or numerical values in the response and prefer to use terms like 'high' and 'low'."
+        instructions_text = "\nTo answer the following question, do not refer to the underlying mechanics of the decision tree in any way. Refer to the features using natural language. All the relevant features must be mentioned in the answer, ignore the features not used in the tree. Finnaly, avoid technical jargon or numerical values in the response and prefer to use terms like 'high' and 'low'."
 
         return instructions_text
 

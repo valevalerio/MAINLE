@@ -68,6 +68,8 @@ class LlmParser(Parser):
                 continue
             parsed_lookup[normalized_key] = value
 
+        _missing = object()
+
         resolved = {}
         for field_name in expected_fields:
             candidate_names = [field_name]
@@ -77,14 +79,14 @@ class LlmParser(Parser):
                     alias_values = [alias_values]
                 candidate_names.extend(alias_values)
 
-            found_value = None
+            found_value = _missing
             for candidate_name in candidate_names:
                 normalized_candidate = self._normalize_schema_name(candidate_name)
                 if normalized_candidate in parsed_lookup:
                     found_value = parsed_lookup[normalized_candidate]
                     break
 
-            if found_value is None:
+            if found_value is _missing:
                 return None
 
             resolved[field_name] = found_value
